@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -20,7 +20,7 @@ const onFinish = async () => {
 
     router.push('/dashboard')
   } catch (err) {
-    message.error(err.message)
+    message.error(err instanceof Error ? err.message : 'Error al iniciar sesión')
   }
 }
 </script>

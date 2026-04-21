@@ -1,7 +1,9 @@
-<script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { apiFetch } from '../api/api'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import UserModal from '@/components/UserModal.vue'
+import { getUsers, deleteUser } from '@/services/user.service'
 
 const users = ref([])
 const loading = ref(false)
@@ -11,71 +13,60 @@ const page = ref(1)
 const limit = ref(10)
 const total = ref(0)
 
-const open = ref(false)
-
-const form = reactive({
-  name: '',
-  lastName: '',
-  email: '',
-  password: '',
-})
-
-// const columns = [
-//   { title: 'Nombre', dataIndex: 'name' },
-//   { title: 'Apellido', dataIndex: 'lastName' },
-//   { title: 'Email', dataIndex: 'email' },
-//   { title: 'Rol', dataIndex: 'role' },
-// ]
+const openModal = ref(false)
+const selectedUser = ref(null)
 
 const columns = [
   { title: 'Nombre', dataIndex: 'name' },
   { title: 'Apellido', dataIndex: 'lastName', responsive: ['md'] },
   { title: 'Email', dataIndex: 'email', responsive: ['lg'] },
   { title: 'Rol', dataIndex: 'role' },
+  { title: 'Acciones', key: 'actions' },
 ]
 
-const fetchUsers = async () => {
+const refreshUsers = async () => {
   loading.value = true
 
   try {
-    const res = await apiFetch(`/users?page=${page.value}&limit=${limit.value}`)
+    const res = await getUsers(page.value, limit.value)
 
     users.value = res.data
     total.value = res.meta.total
   } catch (err) {
-    message.error(err.message)
+    message.error(err instanceof Error ? err.message : 'Error al cargar usuarios')
   }
 
   loading.value = false
 }
 
-const handlePageChange = (p) => {
+const handlePageChange = (p: number) => {
   page.value = p
-  fetchUsers()
+  refreshUsers()
 }
 
-const openModal = () => {
-  open.value = true
+const openCreate = () => {
+  selectedUser.value = null
+  openModal.value = true
 }
 
-const createUser = async () => {
+const openEdit = (user: null) => {
+  selectedUser.value = user
+  openModal.value = true
+}
+
+const handleDelete = async (id: string) => {
   try {
-    await apiFetch('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(form),
-    })
+    await deleteUser(id)
+    message.success('Usuario eliminado')
 
-    message.success('Usuario creado 🚀')
-
-    open.value = false
-    fetchUsers()
-  } catch (err) {
-    message.error(err.message)
+    await refreshUsers()
+  } catch (e) {
+    message.error(e instanceof Error ? e.message : 'Error al eliminar usuario')
   }
 }
 
 onMounted(() => {
-  fetchUsers()
+  refreshUsers()
   const check = () => {
     isMobile.value = window.innerWidth < 768
   }
@@ -87,21 +78,34 @@ onMounted(() => {
 
 <template>
   <a-card>
-    <!-- BOTÓN -->
-    <a-button type="primary" @click="openModal" style="margin-bottom: 16px" :block="isMobile">
+    <a-button type="primary" @click="openCreate" style="margin-bottom: 16px" :block="isMobile">
       Crear usuario
     </a-button>
 
-    <!-- TABLA -->
     <a-table
       :columns="columns"
       :data-source="users"
       :loading="loading"
       :pagination="false"
       rowKey="id"
-    />
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'actions'">
+          <a-button type="link" @click="openEdit(record)">
+            <EditOutlined />
+          </a-button>
 
-    <!-- PAGINACIÓN -->
+          <a-popconfirm
+            title="¿Eliminar usuario?"
+            ok-text="Sí"
+            cancel-text="No"
+            @confirm="handleDelete(record.id)"
+          >
+            <a-button type="link" danger> <DeleteOutlined /> </a-button>
+          </a-popconfirm>
+        </template>
+      </template>
+    </a-table>
     <a-pagination
       :current="page"
       :pageSize="limit"
@@ -110,30 +114,11 @@ onMounted(() => {
       style="margin-top: 16px"
     />
 
-    <!-- MODAL -->
-    <a-modal
-      v-model:open="open"
-      title="Crear usuario"
-      @ok="createUser"
-      :width="isMobile ? '100%' : 500"
-    >
-      <a-form layout="vertical">
-        <a-form-item label="Nombre">
-          <a-input v-model:value="form.name" />
-        </a-form-item>
-
-        <a-form-item label="Apellido">
-          <a-input v-model:value="form.lastName" />
-        </a-form-item>
-
-        <a-form-item label="Email">
-          <a-input v-model:value="form.email" />
-        </a-form-item>
-
-        <a-form-item label="Password">
-          <a-input-password v-model:value="form.password" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+    <UserModal
+      :open="openModal"
+      :user="selectedUser"
+      @close="openModal = false"
+      @success="refreshUsers"
+    />
   </a-card>
 </template>

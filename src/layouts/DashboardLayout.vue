@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -85,7 +85,11 @@ const headerStyle = computed(() => ({
 
     <a-layout class="prueba-mundo" :style="layoutStyle">
       <a-layout-header :style="headerStyle">
-        <div>{{ title }}</div>
+        <a-typography-title
+          :level="2"
+          style="margin: 0px !important; display: flex; align-items: center; color: #1677ff"
+          >{{ title }}</a-typography-title
+        >
       </a-layout-header>
 
       <a-layout-content

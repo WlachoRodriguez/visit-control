@@ -1,19 +1,36 @@
+import axios from 'axios'
+
 const API_URL = 'http://localhost:3000'
 
-export const apiFetch = async (endpoint: string, options: any = {}) => {
-  const token = localStorage.getItem('token')
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-  })
+// Token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
 
-  const data = await res.json()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
 
-  if (!res.ok) throw new Error(data.message)
+    return config
+  },
+  (error) => Promise.reject(error),
+)
 
-  return data
-}
+// Respuesta
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.message || 'Error en la petición'
+
+    return Promise.reject(new Error(message))
+  },
+)
+
+export default api

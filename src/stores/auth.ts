@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { apiFetch } from '../api/api'
+import api from '@/api/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -12,20 +12,28 @@ export const useAuthStore = defineStore('auth', {
         return null
       }
     })(),
+    loading: false,
   }),
 
   actions: {
-    async login(payload: any) {
-      const res = await apiFetch('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      })
+    async login(payload: unknown) {
+      try {
+        this.loading = true
 
-      this.token = res.token
-      this.user = res.user
+        const res = await api.post('/auth/login', payload)
 
-      localStorage.setItem('token', res.token)
-      localStorage.setItem('user', JSON.stringify(res.user))
+        this.token = res.data.token
+        this.user = res.data.user
+
+        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+      } catch (error) {
+        this.logout()
+
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
     logout() {
