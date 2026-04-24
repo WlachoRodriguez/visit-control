@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { UserRole } from '@/types/user'
 import {
   DesktopOutlined,
   TeamOutlined,
@@ -10,6 +11,7 @@ import {
   ContactsOutlined,
   HomeOutlined,
   ApartmentOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons-vue'
 import logo from '../assets/images/logo.png'
 import miniLogo from '../assets/images/miniLogo.png'
@@ -53,6 +55,11 @@ const headerStyle = computed(() => ({
   justifyContent: 'space-between',
   transition: 'all 0.5s',
 }))
+
+const can = (roles?: UserRole[]) => {
+  if (!roles) return true
+  return roles.includes(auth.user?.role)
+}
 </script>
 
 <template>
@@ -71,41 +78,50 @@ const headerStyle = computed(() => ({
         <img v-else :src="miniLogo" style="width: 50px" />
       </div>
 
-      <a-menu theme="dark" mode="inline" :selectedKeys="[{ selectedKey }]">
+      <a-menu theme="dark" mode="inline" :selectedKeys="[selectedKey]">
         <a-menu-item key="dashboard">
           <DesktopOutlined />
           <span>
             <router-link to="/dashboard">Dashboard</router-link>
           </span>
         </a-menu-item>
-        <a-sub-menu key="sub1">
+        <a-sub-menu
+          key="sub1"
+          v-if="can([UserRole.ADMIN]) || can([UserRole.SECRETARY, UserRole.USER])"
+        >
           <template #title>
             <ApartmentOutlined />
             <span> Esquema </span>
           </template>
-          <a-menu-item key="district">
+          <a-menu-item key="district" v-if="can([UserRole.ADMIN])">
             <ShareAltOutlined />
             <span>
               <router-link to="/district">Distritos</router-link>
             </span>
           </a-menu-item>
-          <a-menu-item key="church">
+          <a-menu-item key="church" v-if="can([UserRole.ADMIN])">
             <HomeOutlined />
             <span>
               <router-link to="/church">Iglesias</router-link>
             </span>
           </a-menu-item>
-          <a-menu-item key="member">
+          <a-menu-item key="member" v-if="can([UserRole.SECRETARY, UserRole.USER])">
             <ContactsOutlined />
             <span>
               <router-link to="/member">Miembros</router-link>
             </span>
           </a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="users">
+        <a-menu-item key="users" v-if="can([UserRole.ADMIN])">
           <TeamOutlined />
           <span>
             <router-link to="/users">Usuarios</router-link>
+          </span>
+        </a-menu-item>
+        <a-menu-item key="visit" v-if="can([UserRole.USER])">
+          <CalendarOutlined />
+          <span>
+            <router-link to="/visit">Visitas</router-link>
           </span>
         </a-menu-item>
         <a-menu-item key="register" @click="logout">
