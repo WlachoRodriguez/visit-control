@@ -145,11 +145,16 @@ const handleSubmit = async () => {
         v-if="form.isActive && (form.role === UserRole.USER || form.role === UserRole.SECRETARY)"
         label="Distrito"
       >
-        <a-select v-model:value="form.districtId" placeholder="Seleccione distrito">
-          <a-select-option v-for="d in districts" :key="d.id" :value="d.id">
-            {{ d.name }}
-          </a-select-option>
-        </a-select>
+        <a-select
+          v-model:value="form.districtId"
+          placeholder="Seleccione distrito"
+          :options="
+            districts.map((d) => ({
+              label: d.name,
+              value: d.id,
+            }))
+          "
+        />
       </a-form-item>
     </a-form>
   </a-modal>

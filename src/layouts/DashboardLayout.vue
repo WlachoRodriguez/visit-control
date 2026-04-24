@@ -2,7 +2,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { DesktopOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import {
+  DesktopOutlined,
+  TeamOutlined,
+  LogoutOutlined,
+  ShareAltOutlined,
+  ContactsOutlined,
+  HomeOutlined,
+  ApartmentOutlined,
+} from '@ant-design/icons-vue'
 import logo from '../assets/images/logo.png'
 import miniLogo from '../assets/images/miniLogo.png'
 
@@ -70,6 +78,30 @@ const headerStyle = computed(() => ({
             <router-link to="/dashboard">Dashboard</router-link>
           </span>
         </a-menu-item>
+        <a-sub-menu key="sub1">
+          <template #title>
+            <ApartmentOutlined />
+            <span> Esquema </span>
+          </template>
+          <a-menu-item key="district">
+            <ShareAltOutlined />
+            <span>
+              <router-link to="/district">Distritos</router-link>
+            </span>
+          </a-menu-item>
+          <a-menu-item key="church">
+            <HomeOutlined />
+            <span>
+              <router-link to="/church">Iglesias</router-link>
+            </span>
+          </a-menu-item>
+          <a-menu-item key="member">
+            <ContactsOutlined />
+            <span>
+              <router-link to="/member">Miembros</router-link>
+            </span>
+          </a-menu-item>
+        </a-sub-menu>
         <a-menu-item key="users">
           <TeamOutlined />
           <span>
