@@ -130,11 +130,13 @@ const handleSubmit = async () => {
           v-model:value="form.members"
           :options="
             members.map((m) => ({
-              label: m.name + ' ' + m.lastName,
+              label: `${m.name} ${m.lastName} - ${m.church.name}`,
               value: m.id,
             }))
           "
           placeholder="Seleccione miembros"
+          show-search
+          option-filter-prop="label"
         />
       </a-form-item>
 
