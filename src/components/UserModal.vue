@@ -128,7 +128,12 @@ const handleSubmit = async () => {
         <a-input v-model:value="form.email" placeholder="Email" />
       </a-form-item>
       <a-form-item label="Contraseña">
-        <a-input-password v-if="!isEdit" v-model:value="form.password" placeholder="Password" />
+        <a-input-password
+          v-if="!isEdit"
+          v-model:value="form.password"
+          placeholder="Password"
+          autocomplete="password"
+        />
       </a-form-item>
       <a-form-item label="Rol">
         <a-select v-model:value="form.role">

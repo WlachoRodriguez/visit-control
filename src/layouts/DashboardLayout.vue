@@ -12,6 +12,7 @@ import {
   HomeOutlined,
   ApartmentOutlined,
   CalendarOutlined,
+  LockOutlined,
 } from '@ant-design/icons-vue'
 import logo from '../assets/images/logo.png'
 import miniLogo from '../assets/images/miniLogo.png'
@@ -73,62 +74,79 @@ const can = (roles?: UserRole[]) => {
       :width="200"
       :style="{ transition: 'all 0.5s' }"
     >
-      <div style="color: white; padding: 10px 0px; text-align: center">
-        <img v-if="!collapsed" :src="logo" style="width: 150px" />
-        <img v-else :src="miniLogo" style="width: 50px" />
-      </div>
+      <div
+        style="display: flex; flex-direction: column; height: 100%; justify-content: space-between"
+      >
+        <div>
+          <div style="color: white; padding: 10px 0px; text-align: center">
+            <img v-if="!collapsed" :src="logo" style="width: 150px" />
+            <img v-else :src="miniLogo" style="width: 50px" />
+          </div>
 
-      <a-menu theme="dark" mode="inline" :selectedKeys="[selectedKey]">
-        <a-menu-item key="dashboard">
-          <DesktopOutlined />
-          <span>
-            <router-link to="/dashboard">Dashboard</router-link>
-          </span>
-        </a-menu-item>
-        <a-sub-menu
-          key="sub1"
-          v-if="can([UserRole.ADMIN]) || can([UserRole.SECRETARY, UserRole.USER])"
-        >
-          <template #title>
-            <ApartmentOutlined />
-            <span> Esquema </span>
-          </template>
-          <a-menu-item key="district" v-if="can([UserRole.ADMIN])">
-            <ShareAltOutlined />
-            <span>
-              <router-link to="/district">Distritos</router-link>
-            </span>
-          </a-menu-item>
-          <a-menu-item key="church" v-if="can([UserRole.ADMIN])">
-            <HomeOutlined />
-            <span>
-              <router-link to="/church">Iglesias</router-link>
-            </span>
-          </a-menu-item>
-          <a-menu-item key="member" v-if="can([UserRole.SECRETARY, UserRole.USER])">
-            <ContactsOutlined />
-            <span>
-              <router-link to="/member">Miembros</router-link>
-            </span>
-          </a-menu-item>
-        </a-sub-menu>
-        <a-menu-item key="users" v-if="can([UserRole.ADMIN])">
-          <TeamOutlined />
-          <span>
-            <router-link to="/users">Usuarios</router-link>
-          </span>
-        </a-menu-item>
-        <a-menu-item key="visit" v-if="can([UserRole.USER])">
-          <CalendarOutlined />
-          <span>
-            <router-link to="/visit">Visitas</router-link>
-          </span>
-        </a-menu-item>
-        <a-menu-item key="register" @click="logout">
-          <LogoutOutlined />
-          <span>Cerrar sesión</span>
-        </a-menu-item>
-      </a-menu>
+          <a-menu theme="dark" mode="inline" :selectedKeys="[selectedKey]">
+            <a-menu-item key="dashboard">
+              <DesktopOutlined />
+              <span>
+                <router-link to="/dashboard">Dashboard</router-link>
+              </span>
+            </a-menu-item>
+            <a-sub-menu
+              key="sub1"
+              v-if="can([UserRole.ADMIN]) || can([UserRole.SECRETARY, UserRole.USER])"
+            >
+              <template #title>
+                <ApartmentOutlined />
+                <span> Esquema </span>
+              </template>
+              <a-menu-item key="district" v-if="can([UserRole.ADMIN])">
+                <ShareAltOutlined />
+                <span>
+                  <router-link to="/district">Distritos</router-link>
+                </span>
+              </a-menu-item>
+              <a-menu-item key="church" v-if="can([UserRole.ADMIN])">
+                <HomeOutlined />
+                <span>
+                  <router-link to="/church">Iglesias</router-link>
+                </span>
+              </a-menu-item>
+              <a-menu-item key="member" v-if="can([UserRole.SECRETARY, UserRole.USER])">
+                <ContactsOutlined />
+                <span>
+                  <router-link to="/member">Miembros</router-link>
+                </span>
+              </a-menu-item>
+            </a-sub-menu>
+            <a-menu-item key="users" v-if="can([UserRole.ADMIN])">
+              <TeamOutlined />
+              <span>
+                <router-link to="/users">Usuarios</router-link>
+              </span>
+            </a-menu-item>
+            <a-menu-item key="visit" v-if="can([UserRole.USER])">
+              <CalendarOutlined />
+              <span>
+                <router-link to="/visit">Visitas</router-link>
+              </span>
+            </a-menu-item>
+          </a-menu>
+        </div>
+        <div style="padding: 10px">
+          <a-menu theme="dark" mode="inline" :selectedKeys="[selectedKey]">
+            <a-menu-item key="change-password">
+              <LockOutlined />
+              <span>
+                <router-link to="/change-password">Cambiar clave</router-link>
+              </span>
+            </a-menu-item>
+
+            <a-menu-item key="logout" @click="logout">
+              <LogoutOutlined />
+              <span>Cerrar sesión</span>
+            </a-menu-item>
+          </a-menu>
+        </div>
+      </div>
     </a-layout-sider>
 
     <a-layout class="prueba-mundo" :style="layoutStyle">
