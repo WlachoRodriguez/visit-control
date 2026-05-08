@@ -88,7 +88,7 @@ watch(
 const handleSubmit = async () => {
   try {
     loading.value = true
-    if (form.value.districtId === null) {
+    if (form.value.districtId === null || form.value.districtId === '') {
       delete form.value.districtId
     }
 
