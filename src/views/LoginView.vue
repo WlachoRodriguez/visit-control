@@ -27,7 +27,7 @@ const onFinish = async () => {
 
 <template>
   <a-row justify="center" align="middle" style="height: 100vh">
-    <a-col :span="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+    <a-col :xs="12" :sm="12" :md="8" :lg="8">
       <a-card title="Inicio de sesión">
         <a-form :model="form" layout="vertical" @finish="onFinish">
           <a-form-item
@@ -38,7 +38,7 @@ const onFinish = async () => {
               { type: 'email', message: 'Email inválido' },
             ]"
           >
-            <a-input v-model:value="form.email" />
+            <a-input v-model:value="form.email" autocomplete="useremail" />
           </a-form-item>
 
           <a-form-item
@@ -46,7 +46,7 @@ const onFinish = async () => {
             name="password"
             :rules="[{ required: true, message: 'Password requerido' }]"
           >
-            <a-input-password v-model:value="form.password" />
+            <a-input-password v-model:value="form.password" autocomplete="password" />
           </a-form-item>
 
           <a-form-item>

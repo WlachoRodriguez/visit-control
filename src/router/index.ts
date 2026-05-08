@@ -11,6 +11,7 @@ import ChurchView from '@/views/ChurchView.vue'
 import MemberView from '@/views/MemberView.vue'
 import VisitView from '@/views/VisitView.vue'
 import UnauthorizedView from '@/views/UnauthorizedView.vue'
+import ChangePasswordView from '@/views/ChangePasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,6 +84,14 @@ const router = createRouter({
           component: UnauthorizedView,
           meta: { title: 'No autorizado' },
         },
+        {
+          path: 'change-password',
+          component: ChangePasswordView,
+          meta: {
+            title: 'Cambiar clave',
+            requiresAuth: true,
+          },
+        },
       ],
     },
   ],
@@ -96,8 +105,8 @@ router.beforeEach((to) => {
     return '/login'
   }
 
-  if (to.meta.roles) {
-    const hasAccess = to.meta.roles.includes(auth.user?.role)
+  if (Array.isArray(to.meta.roles)) {
+    const hasAccess = to.meta.roles.includes(auth.user?.role as UserRole)
 
     if (!hasAccess) {
       return '/unauthorized'

@@ -27,3 +27,16 @@ export const deleteUser = async (id: string) => {
   const res = await api.delete(`/users/${id}`)
   return res.data
 }
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string,
+) => {
+  const res = await api.put('/auth/changePassword', {
+    currentPassword,
+    newPassword,
+    confirmPassword,
+  })
+  return res.data
+}
