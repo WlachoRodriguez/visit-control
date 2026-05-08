@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { message } from 'ant-design-vue'
@@ -23,10 +23,14 @@ const onFinish = async () => {
     message.error(err instanceof Error ? err.message : 'Error al iniciar sesión')
   }
 }
+
+const backgroundStyle = computed(() => ({
+  backgroundImage: `url(${import.meta.env.VITE_LOGIN_BACKGROUND})`,
+}))
 </script>
 
 <template>
-  <a-row justify="center" align="middle" style="height: 100vh">
+  <a-row justify="center" align="middle" :style="backgroundStyle" class="login-container">
     <a-col :xs="12" :sm="12" :md="8" :lg="8">
       <a-card title="Inicio de sesión">
         <a-form :model="form" layout="vertical" @finish="onFinish">
@@ -57,3 +61,18 @@ const onFinish = async () => {
     </a-col>
   </a-row>
 </template>
+
+<style scoped>
+.login-container {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+:deep(.ant-card) {
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 16px;
+}
+</style>

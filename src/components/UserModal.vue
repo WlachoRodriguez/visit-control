@@ -88,6 +88,9 @@ watch(
 const handleSubmit = async () => {
   try {
     loading.value = true
+    if (form.value.districtId === null) {
+      delete form.value.districtId
+    }
 
     if (isEdit.value && props.user) {
       await updateUser(props.user.id, form.value as User)
